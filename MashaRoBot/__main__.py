@@ -89,7 +89,7 @@ buttons = [
     ],
     [
         InlineKeyboardButton(
-            text="DEV", callback_data="source_"),
+            text="DEV", url="https://t.me/stickersandgifs_ss"),
         InlineKeyboardButton(
             text="SUPPORT", url="https://t.me/marvelmoviesstuff"
         ),
