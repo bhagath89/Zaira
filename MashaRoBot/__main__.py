@@ -74,7 +74,7 @@ def get_readable_time(seconds: int) -> str:
 
 
 PM_START_TEXT = """
-`Hellow My name is` *Zaira*
+`Hello My name is` *Parvathy*
 `I'm here to help you to make your group managment task easier! TAP` *Commands* `Use buttons given below to know more about me.` 
 """
 
@@ -89,9 +89,9 @@ buttons = [
     ],
     [
         InlineKeyboardButton(
-            text="💾 DEV", callback_data="source_"),
+            text="DEV", callback_data="source_"),
         InlineKeyboardButton(
-            text="👥 SUPPORT", url="https://t.me/magiclmush"
+            text="SUPPORT", url="https://t.me/marvelmoviesstuff"
         ),
     ],
 ]
@@ -346,7 +346,7 @@ def Masha_about_callback(update: Update, context: CallbackContext):
     query = update.callback_query
     if query.data == "masha_":
         query.message.edit_text(
-            text=""" ℹ️ I'm *Zaira*, a powerful group management bot built to help you manage your group easily.
+            text=""" ℹ️ I'm *Parvathy*, a powerful group management bot built to help you manage your group easily.
                  ❍ I can restrict users.
                  ❍ I can greet users with customizable welcome messages and even set a group's rules.
                  ❍ I have an advanced anti-flood system.
@@ -354,8 +354,8 @@ def Masha_about_callback(update: Update, context: CallbackContext):
                  ❍ I have a note keeping system, blacklists, and even predetermined replies on certain keywords.
                  ❍ I check for admins' permissions before executing any command and more stuffs
                  \n_Zaira's licensed under the GNU General Public License v3.0_
-                 Here is the [SUPPORT](https://t.me/magiclmush).
-                 If you have any question about Zaira, let us know at @magicalmush.""",
+                 Here is the [SUPPORT](https://t.me/marvelmoviesstuff).
+                 If you have any question about Parvathy, let us know at @marvelmoviesstuff.""",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
@@ -381,8 +381,8 @@ def Source_about_callback(update: Update, context: CallbackContext):
     query = update.callback_query
     if query.data == "source_":
         query.message.edit_text(
-            text=""" Hi..🤗 I'm *Zaira* THIS BOT CURRENTLY A CLOSED SOURCE CONATCT DEV FOR REPO
-                 \nHere is the [DEV](https://t.me/psykd) .""",
+            text=""" Hi..🤗 I'm *Parvathy* THIS BOT CURRENTLY A CLOSED SOURCE CONATCT DEV FOR REPO
+                 \nHere is the [DEV](https://t.me/FlyingKILI) .""",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=False,
             reply_markup=InlineKeyboardMarkup(
