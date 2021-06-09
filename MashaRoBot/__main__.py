@@ -81,7 +81,7 @@ PM_START_TEXT = """
 buttons = [
     [
         InlineKeyboardButton(
-            text="ADD ME", url="t.me/ZairaRobot?startgroup=true"),
+            text="ADD ME", url="t.me/Midukki_Robot?startgroup=true"),
     ],
     [
         InlineKeyboardButton(text="ABOUT", callback_data="Masha_"),
@@ -353,7 +353,7 @@ def Masha_about_callback(update: Update, context: CallbackContext):
                  ❍ I can warn users until they reach max warns, with each predefined actions such as ban, mute, kick, etc.
                  ❍ I have a note keeping system, blacklists, and even predetermined replies on certain keywords.
                  ❍ I check for admins' permissions before executing any command and more stuffs
-                 \n_Zaira's licensed under the GNU General Public License v3.0_
+                 \n_Parvathy's licensed under the GNU General Public License v3.0_
                  Here is the [SUPPORT](https://t.me/marvelmoviesstuff).
                  If you have any question about Parvathy, let us know at @marvelmoviesstuff.""",
             parse_mode=ParseMode.MARKDOWN,
@@ -677,7 +677,7 @@ def main():
 
     if SUPPORT_CHAT is not None and isinstance(SUPPORT_CHAT, str):
         try:
-            dispatcher.bot.sendMessage(f"@{SUPPORT_CHAT}", "Yes I'm alive 😹")
+            dispatcher.bot.sendMessage(f"@THOR_OF_TELEGRAM", "Yes I'm alive 😹")
         except Unauthorized:
             LOGGER.warning(
                 "Bot isnt able to send message to support_chat, go and check!"
