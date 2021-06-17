@@ -91,7 +91,7 @@ buttons = [
         InlineKeyboardButton(
             text="DEV", url="https://t.me/FlyingKILI"),
         InlineKeyboardButton(
-            text="SUPPORT", url="https://t.me/marvelmoviesstuff"
+            text="SUPPORT", url="https://t.me/zues_bots"
         ),
     ],
 ]
