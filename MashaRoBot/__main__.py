@@ -89,7 +89,7 @@ buttons = [
     ],
     [
         InlineKeyboardButton(
-            text="DEV", url="https://t.me/stickersandgifs_ss"),
+            text="DEV", url="https://t.me/FlyingKILI"),
         InlineKeyboardButton(
             text="SUPPORT", url="https://t.me/marvelmoviesstuff"
         ),
@@ -186,7 +186,7 @@ def start(update: Update, context: CallbackContext):
                     update.effective_chat.id,
                     HELPABLE[mod].__help__,
                     InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="⬅️ BACK", callback_data="help_back")]]
+                        [[InlineKeyboardButton(text="BACK", callback_data="help_back")]]
                     ),
                 )
 
@@ -346,7 +346,7 @@ def Masha_about_callback(update: Update, context: CallbackContext):
     query = update.callback_query
     if query.data == "masha_":
         query.message.edit_text(
-            text=""" ℹ️ I'm *Parvathy*, a powerful group management bot built to help you manage your group easily.
+            text="""I'm *Parvathy*, a powerful group management bot built to help you manage your group easily.
                  ❍ I can restrict users.
                  ❍ I can greet users with customizable welcome messages and even set a group's rules.
                  ❍ I have an advanced anti-flood system.
@@ -381,7 +381,7 @@ def Source_about_callback(update: Update, context: CallbackContext):
     query = update.callback_query
     if query.data == "source_":
         query.message.edit_text(
-            text=""" Hi..🤗 I'm *Parvathy* THIS BOT CURRENTLY A CLOSED SOURCE CONATCT DEV FOR REPO
+            text=""" Hi..I'm *Parvathy* THIS BOT CURRENTLY A CLOSED SOURCE CONATCT DEV FOR REPO
                  \nHere is the [DEV](https://t.me/FlyingKILI) .""",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=False,
@@ -677,7 +677,7 @@ def main():
 
     if SUPPORT_CHAT is not None and isinstance(SUPPORT_CHAT, str):
         try:
-            dispatcher.bot.sendMessage(f"@THOR_OF_TELEGRAM", "Yes I'm alive 😹")
+            dispatcher.bot.sendMessage(f"@THOR_OF_TELEGRAM", "Yes I'm alive 🥰")
         except Unauthorized:
             LOGGER.warning(
                 "Bot isnt able to send message to support_chat, go and check!"
