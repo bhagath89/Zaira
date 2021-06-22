@@ -91,7 +91,7 @@ buttons = [
         InlineKeyboardButton(
             text="DEV", url="https://t.me/FlyingKILI"),
         InlineKeyboardButton(
-            text="SUPPORT", url="https://t.me/zues_bots"
+            text="SUPPORT", url="https://t.me/FlyingKILI"
         ),
     ],
 ]
@@ -354,8 +354,8 @@ def Masha_about_callback(update: Update, context: CallbackContext):
                  ❍ I have a note keeping system, blacklists, and even predetermined replies on certain keywords.
                  ❍ I check for admins' permissions before executing any command and more stuffs
                  \n_Parvathy's licensed under the GNU General Public License v3.0_
-                 Here is the [SUPPORT](https://t.me/marvelmoviesstuff).
-                 If you have any question about Parvathy, let us know at @marvelmoviesstuff.""",
+                 Here is the [SOURCE](https://t.me/uvvauvve).
+                 If you have any question about Parvathy, let us know at @FlyingKILI.""",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
@@ -677,7 +677,7 @@ def main():
 
     if SUPPORT_CHAT is not None and isinstance(SUPPORT_CHAT, str):
         try:
-            dispatcher.bot.sendMessage(f"@THOR_OF_TELEGRAM", "Yes I'm alive 🥰")
+            dispatcher.bot.sendMessage(f"@FlyingKILI", "Yes I'm alive 🥰")
         except Unauthorized:
             LOGGER.warning(
                 "Bot isnt able to send message to support_chat, go and check!"
