@@ -84,7 +84,7 @@ buttons = [
             text="ADD ME", url="t.me/Midukki_Robot?startgroup=true"),
     ],
     [
-        InlineKeyboardButton(text="ABOUT", callback_data="Masha_robot"),
+        InlineKeyboardButton(text="ABOUT", url="https://t.me/FlyingKILI"),
         InlineKeyboardButton(text="COMMANDS", callback_data="help_back"),
     ],
     [
