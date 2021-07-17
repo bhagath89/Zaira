@@ -1,178 +1,157 @@
-import html
+import os
 
-# AI module using Intellivoid's Coffeehouse API by @TheRealPhoenix
-from time import sleep, time
+#Saavn 
 
-import MashaRoBot.modules.sql.chatbot_sql as sql
-from coffeehouse.api import API
-from coffeehouse.exception import CoffeeHouseError as CFError
-from coffeehouse.lydia import LydiaAI
-from MashaRoBot import AI_API_KEY, OWNER_ID, SUPPORT_CHAT, dispatcher
-from MashaRoBot.modules.helper_funcs.chat_status import user_admin
-from MashaRoBot.modules.helper_funcs.filters import CustomFilters
-from MashaRoBot.modules.log_channel import gloggable
-from telegram import Update
-from telegram.error import BadRequest, RetryAfter, Unauthorized
-from telegram.ext import (
-    CallbackContext,
-    CommandHandler,
-    Filters,
-    MessageHandler,
-    run_async,
-)
-from telegram.utils.helpers import mention_html
+import requests
+import wget
+from pyrogram import filters
 
-CoffeeHouseAPI = API(AI_API_KEY)
-api_client = LydiaAI(CoffeeHouseAPI)
+from LaylaRobot import pbot as Jebot
+from LaylaRobot.pyrogramee.dark import get_arg
 
 
-@run_async
-@user_admin
-@gloggable
-def add_chat(update: Update, context: CallbackContext):
-    global api_client
-    chat = update.effective_chat
-    msg = update.effective_message
-    user = update.effective_user
-    is_chat = sql.is_chat(chat.id)
-    if chat.type == "private":
-        msg.reply_text("You can't enable AI in PM.")
-        return
-
-    if not is_chat:
-        ses = api_client.create_session()
-        ses_id = str(ses.id)
-        expires = str(ses.expires)
-        sql.set_ses(chat.id, ses_id, expires)
-        msg.reply_text("AI successfully enabled for this chat!")
-        message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#AI_ENABLED\n"
-            f"<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}\n"
-        )
-        return message
-    else:
-        msg.reply_text("AI is already enabled for this chat!")
+@Jebot.on_message(filters.command("saavn"))
+async def song(client, message):
+    message.chat.id
+    message.from_user["id"]
+    args = get_arg(message) + " " + "song"
+    if args.startswith(" "):
+        await message.reply("<b>Enter song name❗</b>")
         return ""
-
-
-@run_async
-@user_admin
-@gloggable
-def remove_chat(update: Update, context: CallbackContext):
-    msg = update.effective_message
-    chat = update.effective_chat
-    user = update.effective_user
-    is_chat = sql.is_chat(chat.id)
-    if not is_chat:
-        msg.reply_text("AI isn't enabled here in the first place!")
-        return ""
-    else:
-        sql.rem_chat(chat.id)
-        msg.reply_text("AI disabled successfully!")
-        message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#AI_DISABLED\n"
-            f"<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}\n"
-        )
-        return message
-
-
-def check_message(context: CallbackContext, message):
-    reply_msg = message.reply_to_message
-    if message.text.lower() == "masha":
-        return True
-    if reply_msg:
-        if reply_msg.from_user.id == context.bot.get_me().id:
-            return True
-    else:
-        return False
-
-
-@run_async
-def chatbot(update: Update, context: CallbackContext):
-    global api_client
-    msg = update.effective_message
-    chat_id = update.effective_chat.id
-    is_chat = sql.is_chat(chat_id)
-    bot = context.bot
-    if not is_chat:
+    m = await message.reply_text(
+        "Downloading your song,\nPlz wait ⏳️"
+    )
+    try:
+        r = requests.get(f"https://jostapi.herokuapp.com/saavn?query={args}")
+    except Exception as e:
+        await m.edit(str(e))
         return
-    if msg.text and not msg.document:
-        if not check_message(context, msg):
-            return
-        sesh, exp = sql.get_ses(chat_id)
-        query = msg.text
-        try:
-            if int(exp) < time():
-                ses = api_client.create_session()
-                ses_id = str(ses.id)
-                expires = str(ses.expires)
-                sql.set_ses(chat_id, ses_id, expires)
-                sesh, exp = sql.get_ses(chat_id)
-        except ValueError:
-            pass
-        try:
-            bot.send_chat_action(chat_id, action="typing")
-            rep = api_client.think_thought(sesh, query)
-            sleep(0.3)
-            msg.reply_text(rep, timeout=60)
-        except CFError as e:
-            pass
-            # bot.send_message(OWNER_ID,
-            #                 f"Chatbot error: {e} occurred in {chat_id}!")
+    sname = r.json()[0]["song"]
+    slink = r.json()[0]["media_url"]
+    ssingers = r.json()[0]["singers"]
+    file = wget.download(slink)
+    ffile = file.replace("mp4", "m4a")
+    os.rename(file, ffile)
+    await message.reply_audio(audio=ffile, title=sname, performer=ssingers)
+    os.remove(ffile)
+    await m.delete()
 
 
-@run_async
-def list_chatbot_chats(update: Update, context: CallbackContext):
-    chats = sql.get_all_chats()
-    text = "<b>AI-Enabled Chats</b>\n"
-    for chat in chats:
-        try:
-            x = context.bot.get_chat(int(*chat))
-            name = x.title or x.first_name
-            text += f"• <code>{name}</code>\n"
-        except BadRequest:
-            sql.rem_chat(*chat)
-        except Unauthorized:
-            sql.rem_chat(*chat)
-        except RetryAfter as e:
-            sleep(e.retry_after)
-    update.effective_message.reply_text(text, parse_mode="HTML")
+#deezer#
+# Credits for @TheHamkerCat
+
+import os
+import aiofiles
+import aiohttp
+from pyrogram import filters
+from LaylaRobot import pbot as Layla
+
+ARQ = "https://thearq.tech/"
+
+async def fetch(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            try:
+                data = await resp.json()
+            except:
+                data = await resp.text()
+    return data
+
+async def download_song(url):
+    song_name = f"asuna.mp3"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp.status == 200:
+                f = await aiofiles.open(song_name, mode="wb")
+                await f.write(await resp.read())
+                await f.close()
+    return song_name
 
 
-__help__ = f"""
-Chatbot utilizes the CoffeeHouse API and allows Saitama to talk and provides a more interactive group chat experience.
-*Commands:* 
-*Admins only:*
- ❍ /addchat*:* Enables Chatbot mode in the chat.
- ❍ /rmchat*:* Disables Chatbot mode in the chat.
-Reports bugs at @{SUPPORT_CHAT}
-[Powered by KILI](https://t.me/FlyingKILI) from @FlyingKILI
+@Layla.on_message(filters.command("deezer"))
+async def deezer(_, message):
+    if len(message.command) < 2:
+        await message.reply_text("Download Now Deezer")
+        return
+    text = message.text.split(None, 1)[1]
+    query = text.replace(" ", "%20")
+    m = await message.reply_text("Searching...")
+    try:
+        r = await fetch(f"{ARQ}deezer?query={query}&count=1")
+        title = r[0]["title"]
+        url = r[0]["url"]
+        artist = r[0]["artist"]
+    except Exception as e:
+        await m.edit(str(e))
+        return
+    await m.edit("Downloading...")
+    song = await download_song(url)
+    await m.edit("Uploading...")
+    await message.reply_audio(audio=song, title=title, performer=artist)
+    os.remove(song)
+    await m.delete()
+
+#Deezer
+# Credits for @TheHamkerCat
+
+import os
+import aiofiles
+import aiohttp
+from pyrogram import filters
+from LaylaRobot import pbot as ASUNA
+
+ARQ = "https://thearq.tech/"
+
+async def fetch(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            try:
+                data = await resp.json()
+            except:
+                data = await resp.text()
+    return data
+
+async def download_song(url):
+    song_name = f"asuna.mp3"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp.status == 200:
+                f = await aiofiles.open(song_name, mode="wb")
+                await f.write(await resp.read())
+                await f.close()
+    return song_name
+
+
+@Layla.on_message(filters.command("deezer"))
+async def deezer(_, message):
+    if len(message.command) < 2:
+        await message.reply_text("Download Now Deezer")
+        return
+    text = message.text.split(None, 1)[1]
+    query = text.replace(" ", "%20")
+    m = await message.reply_text("Searching...")
+    try:
+        r = await fetch(f"{ARQ}deezer?query={query}&count=1")
+        title = r[0]["title"]
+        url = r[0]["url"]
+        artist = r[0]["artist"]
+    except Exception as e:
+        await m.edit(str(e))
+        return
+    await m.edit("Downloading...")
+    song = await download_song(url)
+    await m.edit("Uploading...")
+    await message.reply_audio(audio=song, title=title, performer=artist)
+    os.remove(song)
+    await m.delete()
+    
+    
+__mod_name__ = "ᴍᴜꜱɪᴄ"
+
+__help__ = """
+• `/song`** <songname artist(optional)>: download the song in it's best quality available.(API BASED)
+• `/video`** <songname artist(optional)>: download the video song in it's best quality available.
+• `/deezer`** <songname>: download from deezer
+• `/lyrics`** <songname artist(optional)>: sends the complete lyrics of the song provided as input
+• `/glyrics`** <i> song name </i> : This plugin searches for song lyrics with song name and artist.
 """
-
-ADD_CHAT_HANDLER = CommandHandler("addchat", add_chat)
-REMOVE_CHAT_HANDLER = CommandHandler("rmchat", remove_chat)
-CHATBOT_HANDLER = MessageHandler(
-    Filters.text
-    & (~Filters.regex(r"^#[^\s]+") & ~Filters.regex(r"^!") & ~Filters.regex(r"^\/")),
-    chatbot,
-)
-LIST_CB_CHATS_HANDLER = CommandHandler(
-    "listaichats", list_chatbot_chats, filters=CustomFilters.dev_filter
-)
-# Filters for ignoring #note messages, !commands and sed.
-
-dispatcher.add_handler(ADD_CHAT_HANDLER)
-dispatcher.add_handler(REMOVE_CHAT_HANDLER)
-dispatcher.add_handler(CHATBOT_HANDLER)
-dispatcher.add_handler(LIST_CB_CHATS_HANDLER)
-
-__mod_name__ = "CHATBOT"
-__command_list__ = ["addchat", "rmchat", "listaichats"]
-__handlers__ = [
-    ADD_CHAT_HANDLER,
-    REMOVE_CHAT_HANDLER,
-    CHATBOT_HANDLER,
-    LIST_CB_CHATS_HANDLER,
-]
